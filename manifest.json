@@ -1,0 +1,10 @@
+{
+  "id": "buddybridge-deep",
+  "name": "BuddyBridge Deep",
+  "minAppVersion": "1.7.2",
+  "description": "An unofficial bridge for DeepSeek Harness via the Agent Client Protocol (ACP): multi-turn chat, streaming responses, thinking blocks and tool calls.",
+  "author": "ben4202121",
+  "authorUrl": "https://github.com/ben4202121",
+  "isDesktopOnly": true,
+  "version": "0.2.0"
+}

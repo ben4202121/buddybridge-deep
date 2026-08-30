@@ -1,0 +1,15 @@
+node_modules/
+*.js
+!main.js
+!jest.config.js
+*.js.map
+.DS_Store
+.obsidian/
+.hotreload
+coverage/
+*.zip
+.codegraph/daemon.pid
+.claude/
+.acp-inspect/
+# 内部开发文档（含本机真实路径/配置细节），不随仓库推送
+docs/
