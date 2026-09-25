@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - '*'
 
 jobs:
   release:
@@ -20,10 +20,10 @@ jobs:
 
       - name: Verify version matches tag
         run: |
-          TAG="${GITHUB_REF#refs/tags/v}"
+          TAG="${GITHUB_REF#refs/tags/}"
           MANIFEST_VERSION="$(node -p "require('./manifest.json').version")"
           if [ "$TAG" != "$MANIFEST_VERSION" ]; then
-            echo "Tag v${TAG} does not match manifest version ${MANIFEST_VERSION}" >&2
+            echo "Tag ${TAG} does not match manifest version ${MANIFEST_VERSION}" >&2
             exit 1
           fi
 
