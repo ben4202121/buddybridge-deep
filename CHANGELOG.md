@@ -1,6 +1,6 @@
 # 更新日志 / Changelog
 
-## 0.3.0 (2026-09-23)
+## 0.3.1 (2026-09-25)
 
 ### 新增 / Added
 
@@ -12,6 +12,15 @@
   - `buildCordisYml` mounts three in-box tool plugins — `subprocess`, `tool-fs` (read/write/edit), and `tool-fs-search` (glob/grep) — ordered before `acp-demo`.
   - Fixes file/command tools previously returning `unknown tool`, which blocked managing the llmwiki vault.
   - No `package.json` change or extra install needed (resolved via DSH's flat fallback directory).
+
+### 修复 / Fixed
+
+- **修复 GitHub Actions 发布与 CI 流程，使 0.3.x 能正常发布并通过审查。**
+  - Release 流程补上 `contents: write` 权限，修复「Create Release」步骤失败。
+  - 修复 `resolveShimTarget` 的反斜杠路径归一化，以及多个 Windows 专属测试缺少跨平台守卫的问题，使 CI「80% 覆盖率」门禁在 Linux 上通过。
+- **Fixed GitHub Actions release and CI workflows so the release publishes and passes review.**
+  - Added `contents: write` permission to fix the "Create Release" step failure.
+  - Fixed `resolveShimTarget` backslash normalization and added cross-platform guards for Windows-only tests so the CI 80% coverage gate passes on Linux.
 
 ### 测试 / Tests
 
