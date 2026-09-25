@@ -272,6 +272,27 @@ describe('buildCordisYml', () => {
         expect(y).toContain("name: '@deepseek-ai/dsh-acp-demo'");
         expect(y).toContain('workspaceContext: false');
     });
+
+    it('mounts the file-access tool stack so sessions can read/write/search the vault', () => {
+        const y = buildCordisYml({ model: 'deepseek-v4-flash', provider: 'deepseek-official', persistenceRoot: 'C:\\.dsh\\.sessions' });
+        // subprocess 底座（grep/glob 执行）＋ 文件工具三件套
+        expect(y).toContain("- id: subprocess");
+        expect(y).toContain("name: '@deepseek-ai/dsh-subprocess-local'");
+        expect(y).toContain("- id: tool-fs");
+        expect(y).toContain("name: '@deepseek-ai/dsh-tool-fs'");
+        expect(y).toContain("- id: tool-fs-search");
+        expect(y).toContain("name: '@deepseek-ai/dsh-tool-fs-search'");
+        expect(y).toContain('sampleOverCapGlobResults: false');
+        // tool-fs-search 必须在 subprocess 就绪后才会激活，其条目排布在 acp-demo 之前
+        const subprocessIdx = y.indexOf('- id: subprocess');
+        const fsIdx = y.indexOf('- id: tool-fs');
+        const searchIdx = y.indexOf('- id: tool-fs-search');
+        const acpIdx = y.indexOf('- id: acp-demo');
+        expect(subprocessIdx).toBeGreaterThan(-1);
+        expect(fsIdx).toBeGreaterThan(subprocessIdx);
+        expect(searchIdx).toBeGreaterThan(fsIdx);
+        expect(acpIdx).toBeGreaterThan(searchIdx);
+    });
 });
 
 describe('computeProfilePaths', () => {

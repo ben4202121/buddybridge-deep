@@ -120,7 +120,18 @@ export interface CordisOptions {
     persistenceRoot: string;
 }
 
-/** 生成 cordis.yml（顶层插件树；供 demo bin `-c` 使用）。 */
+/**
+ * 生成 cordis.yml（顶层插件树；供 demo bin `-c` 使用）。
+ *
+ * 除 acp-demo 自带的 agent-spine-demo（goal/job/skill 工具）外，这里显式挂载
+ * 「文件访问工具栈」，否则会话里模型看不到 read/write/edit/grep/glob，表现为
+ * 读不了知识库（Vault）：
+ *   - subprocess（dsh-subprocess-local）：tool-fs-search（grep/glob）的执行底座
+ *   - tool-fs：read / write / edit（read_image 在有 attachments 时才挂载）
+ *   - tool-fs-search：grep / glob（内置 ripgrep，无需系统 rg）
+ * 三者都是 dsh 自带的 in-box 插件，经 `~/.dsh/profiles/node_modules` 平面回退目录
+ * （dsh-app-boot 维护的符号链接）即可解析，无需额外写入 profile 的 package.json。
+ */
 export function buildCordisYml(opts: CordisOptions): string {
     const { model, provider, persistenceRoot } = opts;
     return [
@@ -152,6 +163,14 @@ export function buildCordisYml(opts: CordisOptions): string {
         "  name: '@deepseek-ai/dsh-fs-sandbox'",
         '  config:',
         '    cwd: !!js process.cwd()',
+        '- id: subprocess',
+        "  name: '@deepseek-ai/dsh-subprocess-local'",
+        '- id: tool-fs',
+        "  name: '@deepseek-ai/dsh-tool-fs'",
+        '- id: tool-fs-search',
+        "  name: '@deepseek-ai/dsh-tool-fs-search'",
+        '  config:',
+        '    sampleOverCapGlobResults: false',
         '- id: acp-demo',
         "  name: '@deepseek-ai/dsh-acp-demo'",
         '  config:',
