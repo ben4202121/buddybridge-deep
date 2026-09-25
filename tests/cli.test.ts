@@ -324,7 +324,9 @@ describe('DeepSeekBridgeAdapter 断链自愈', () => {
         server.onRequest = (msg) => initHandler(server, msg);
         const adapter = new DeepSeekBridgeAdapter({ transport: pair.client, restartDelayBaseMs: 1 });
         // 绝对路径指向不存在的可执行文件：非 bare command，必判失败
-        await adapter.initialize({ command: 'Z:\\definitely\\missing\\dsh.exe --profile acp', vaultPath: 'C:\\vault', timeoutMs: 1000 });
+        // 用 path.resolve 生成跨平台绝对路径（Z:\ 仅 Windows 才视为绝对，Linux 下会被误判为 bare command）
+        const missingExe = path.resolve('definitely-missing-dsh.exe');
+        await adapter.initialize({ command: `${missingExe} --profile acp`, vaultPath: 'C:\\vault', timeoutMs: 1000 });
         const d = await adapter.diagnose();
         const exe = d.checks.find(c => c.name === 'DSH 可执行文件')!;
         expect(exe.passed).toBe(false);
