@@ -1,6 +1,6 @@
 {
   "name": "obsidian-buddybridge-deep",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "第三方 Obsidian 插件，通过 ACP (Agent Client Protocol) 桥接 DeepSeek Harness，支持流式响应、思考过程、工具调用与会话管理",
   "main": "main.js",
   "scripts": {
