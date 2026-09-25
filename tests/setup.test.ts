@@ -350,6 +350,7 @@ describe('runBackendSetup', () => {
     });
 
     it('installs dsh when authorized (npm via node <npm-cli.js> shim, not bare cmd)', async () => {
+        if (process.platform !== 'win32') return; // Windows 专属：npm 是 .cmd shim 须经 node 直启
         const h = harness({ dshPath: null });
         const res = await runBackendSetup(h.ctx, h.withOpts({ allowInstallDsh: true }));
         expect(res.ok).toBe(true);
@@ -361,6 +362,7 @@ describe('runBackendSetup', () => {
     });
 
     it('installs pnpm when missing and authorized (npm via node <npm-cli.js> shim)', async () => {
+        if (process.platform !== 'win32') return; // Windows 专属：npm 是 .cmd shim 须经 node 直启
         const h = harness({ pnpmPath: null });
         const res = await runBackendSetup(h.ctx, h.withOpts({ allowInstallPnpm: true }));
         expect(res.ok).toBe(true);
@@ -456,6 +458,7 @@ describe('runBackendSetup', () => {
 
 describe('resolveExecTarget npm shim fidelity', () => {
     it('resolves npm.cmd to node <npm-cli.js> (no cmd.exe / GBK)', () => {
+        if (process.platform !== 'win32') return; // Windows 专属：.cmd shim 转 node 直启
         const h = harness();
         const t = resolveExecTarget(h.ctx, 'npm');
         expect(t.program).toBe('node');
@@ -525,12 +528,14 @@ describe('resolveExecTarget', () => {
         expect(t.args).toEqual([]);
     });
     it('resolves .ps1 through powershell.exe', () => {
+        if (process.platform !== 'win32') return; // Windows 专属：.ps1 经 powershell.exe 启动
         const h = harness();
         const t = resolveExecTarget(h.ctx, 'C:/tools/setup.ps1');
         expect(t.program).toBe('powershell.exe');
         expect(t.args).toContain('-File');
     });
     it('resolves .cmd shim to node <entry> when shim target found', () => {
+        if (process.platform !== 'win32') return; // Windows 专属：.cmd shim 转 node <entry> 直启
         const state = { dshPath: 'C:/tools/dsh.cmd' } as MockState;
         const { ctx } = createMockContext(state);
         // 覆盖 resolveShimTarget 模拟找到真实入口

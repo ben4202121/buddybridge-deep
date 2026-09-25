@@ -128,7 +128,10 @@ export function resolveShimTarget(shimPath: string): string | null {
         const content = fs.readFileSync(shimPath, 'utf-8');
         const m = content.match(/node_modules[\\/]([^"%\r\n]+?\.js)/);
         if (!m) return null;
-        const target = path.join(path.dirname(shimPath), 'node_modules', m[1]);
+        // shim 内容里的分隔符随平台而异（Windows 写反斜杠）；归一化到平台分隔符，
+        // 否则 Linux 上反斜杠被当作字面字符，拼出的路径永远不存在（跨平台测试回归）。
+        const entry = m[1].replace(/[\\/]/g, path.sep);
+        const target = path.join(path.dirname(shimPath), 'node_modules', entry);
         return fileExists(target) ? target : null;
     } catch {
         return null;
